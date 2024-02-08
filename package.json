@@ -2,7 +2,7 @@
   "name": "@hexlet/code",
   "version": "1.0.0",
   "type": "module",
-  "main": "gendiff.js",
+  "main": "src/gendiff.js",
   "description": "Compares two configuration files and shows a difference.",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

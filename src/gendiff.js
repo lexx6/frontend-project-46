@@ -1,6 +1,5 @@
 import { Command } from 'commander';
-import { cwd } from 'node:process';
-import path from 'node:path'; 
+import parser from './parser.js'; 
 
 const program = new Command();
 
@@ -11,9 +10,10 @@ program
     .option('-f, --format [type]', 'output format')
     .helpOption('-h, --help', 'output usage information')
     .action((filepath1, filepath2, {format}) => {
-        const file1 = path.resolve(cwd(), filepath1); //path.extname()
-        const file2 = path.resolve(cwd(), filepath2);
-        console.log(file1, file2, format);
+        // console.log(file1, file2, format);
+        const diff = parser(filepath1, filepath2)
+        console.log(diff);
+        // console.log(formatDiff(format || 'defaultFormat'));
     });
 
 program.parse(process.argv);
