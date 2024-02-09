@@ -17,15 +17,10 @@ const getData = ({path, ext}) => {
 }
 
 
-
-export default (filepath1, filepath2, format) => {
+export default (filepath1, filepath2) => {
     const paths = getPaths(filepath1, filepath2);
-    const data1 = getData(paths[0]);
-    const data2 = getData(paths[1]);
-    // const data1 = getData(paths[0]) // { [] , key: value}
-    // const data2 = getData(paths[1]) // { [] , key: value}
-    // const diff = getDiff(data1, data2) // { [] , key: value}
-    // return getResult(diff, format)
-
-    return data2;
+    return {
+        data1: getData(paths[0]),  
+        data2: getData(paths[1]),
+    };
 };
