@@ -8,20 +8,23 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
+
     - uses: actions/checkout@v3
 
     - name: Install dependencies
-      run: make install
-      
+      run: make install     
+
     - name: Run linting
       run: make lint
 
     - name: Run tests
       run: make test
 
+    - uses: paambaati/codeclimate-action@v2.2.4
     - name: Run test-coverage
-      run: make test-coverage
+      env:
+        CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+      with:
+        coverageCommand: make test-coverage
