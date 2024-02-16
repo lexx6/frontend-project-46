@@ -7,7 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
 
-test('format stylish', () => {
+test('json and json, format stylish', () => {
   const expectedOutput = '{\n  - follow: false\n'
   + '    host: hexlet.io\n'
   + '  - proxy: 123.234.53.22\n'
@@ -23,7 +23,7 @@ test('format stylish', () => {
   ).toBe(expectedOutput);
 });
 
-test('format stylish', () => {
+test('json and json, format default', () => {
   const expectedOutput = [
     {
       key: 'follow', newValue: undefined, oldValue: false, state: 'deleted',
@@ -44,6 +44,32 @@ test('format stylish', () => {
   expect(
     genDiff(
       getFixturePath('file1.json'),
+      getFixturePath('file2.json'),
+    ),
+  ).toStrictEqual(expectedOutput);
+});
+
+test('json and yaml, format default', () => {
+  const expectedOutput = [
+    {
+      key: 'follow', newValue: undefined, oldValue: false, state: 'deleted',
+    },
+    {
+      key: 'host', newValue: 'hexlet.io', oldValue: 'hexlet.io', state: 'shared',
+    },
+    {
+      key: 'proxy', newValue: undefined, oldValue: '123.234.53.22', state: 'deleted',
+    },
+    {
+      key: 'timeout', newValue: 20, oldValue: 50, state: 'updated',
+    },
+    {
+      key: 'verbose', newValue: true, oldValue: undefined, state: 'added',
+    },
+  ];
+  expect(
+    genDiff(
+      getFixturePath('file1.yml'),
       getFixturePath('file2.json'),
     ),
   ).toStrictEqual(expectedOutput);

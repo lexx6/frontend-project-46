@@ -1,6 +1,7 @@
 import { cwd } from 'node:process';
 import path from 'node:path';
 import fs from 'node:fs';
+import yaml from 'js-yaml';
 
 const getPaths = (...filepaths) => [
   ...filepaths.map((filePath) => ({
@@ -12,6 +13,7 @@ const getPaths = (...filepaths) => [
 const getData = ({ path: p, ext }) => {
   switch (ext) {
     case '.json': return JSON.parse(fs.readFileSync(p));
+    case '.yml': return yaml.load(fs.readFileSync(p));
     default: throw new Error('Extension not found');
   }
 };
