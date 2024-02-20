@@ -1,4 +1,5 @@
 /* eslint-disable no-underscore-dangle */
+import fs from 'node:fs';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import genDiff from '../src/genDiff.js';
@@ -6,29 +7,7 @@ import genDiff from '../src/genDiff.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
-const expectedRawOutput = [
-  {
-    key: 'follow', newValue: undefined, oldValue: false, state: 'deleted',
-  },
-  {
-    key: 'host', newValue: 'hexlet.io', oldValue: 'hexlet.io', state: 'shared',
-  },
-  {
-    key: 'proxy', newValue: undefined, oldValue: '123.234.53.22', state: 'deleted',
-  },
-  {
-    key: 'timeout', newValue: 20, oldValue: 50, state: 'updated',
-  },
-  {
-    key: 'verbose', newValue: true, oldValue: undefined, state: 'added',
-  },
-];
-const expectedStylishOutput = '{\n  - follow: false\n'
-+ '    host: hexlet.io\n'
-+ '  - proxy: 123.234.53.22\n'
-+ '  - timeout: 50\n'
-+ '  + timeout: 20\n'
-+ '  + verbose: true\n}';
+const readFile = (name) => fs.readFileSync(getFixturePath(name));
 
 test('json and json, format stylish', () => {
   expect(
@@ -37,7 +16,7 @@ test('json and json, format stylish', () => {
       getFixturePath('file2.json'),
       'stylish',
     ),
-  ).toBe(expectedStylishOutput);
+  ).toEqual(readFile('jsonJsonStylishTest.txt'));
 });
 
 test('json and json, format default', () => {
@@ -46,7 +25,7 @@ test('json and json, format default', () => {
       getFixturePath('file1.json'),
       getFixturePath('file2.json'),
     ),
-  ).toStrictEqual(expectedRawOutput);
+  ).toEqual(readFile('jsonJsonRawTest.txt'));
 });
 
 test('json and yaml, format default', () => {
@@ -55,5 +34,5 @@ test('json and yaml, format default', () => {
       getFixturePath('file1.yml'),
       getFixturePath('file2.json'),
     ),
-  ).toStrictEqual(expectedRawOutput);
+  ).toEqual(readFile('yamlJsonRawTest.txt'));
 });
