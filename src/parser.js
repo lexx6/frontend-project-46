@@ -12,8 +12,8 @@ const getPaths = (...filepaths) => [
 
 const getData = ({ path: p, ext }) => {
   switch (ext) {
-    case '.json': return JSON.parse(fs.readFileSync(p));
-    case '.yml': return yaml.load(fs.readFileSync(p));
+    case '.json': return JSON.parse(fs.readFileSync(p), 'utf-8');
+    case '.yml': return yaml.load(fs.readFileSync(p), 'utf-8');
     default: throw new Error('Extension not found');
   }
 };
