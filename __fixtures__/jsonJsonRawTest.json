@@ -104,7 +104,7 @@
     },
     {
       "key": "group2",
-      "state": "deleted---",
+      "state": "deleted",
       "children": [
         {
           "key": "abc",
@@ -113,7 +113,7 @@
         },
         {
           "key": "deep",
-          "state": "deleted---",
+          "state": "deleted",
           "children": [
             {
               "key": "id",

@@ -14,7 +14,7 @@ const createTreeRecursive = (before, after) => {
         };
       case (_.isObject(before[key]) && !_.has(after, key)): // объект -> не стало
         return {
-          key, state: 'deleted---', children: createTreeRecursive(before[key], {}),
+          key, state: 'deleted', children: createTreeRecursive(before[key], {}),
         };
       case (_.isObject(before[key]) && !_.isObject(after[key])): // объект -> не объект
         return {
