@@ -2,30 +2,61 @@ import _ from 'lodash';
 import parser from './parser.js';
 import stylish from './formatter/stylish.js';
 
-const getStateByKey = (data1, data2, key) => {
-  if (data1[key] === data2[key]) return 'shared';
-  if (Object.hasOwn(data1, key) && !Object.hasOwn(data2, key)) return 'deleted';
-  if (!Object.hasOwn(data1, key) && Object.hasOwn(data2, key)) return 'added';
-  if (data1[key] !== data2[key]) return 'updated';
-  throw new Error('Unknown state');
+// рекурсивно создает дерево различий
+const createTreeRecursive = (before, after) => {
+  const keys = _.sortBy(_.union(_.keys(before), _.keys(after)));
+  return keys.map((key) => {
+    switch (true) {
+      // объекты
+      case (_.isObject(before[key]) && _.isObject(after[key])): // было/стало оба объекты
+        return {
+          key, state: 'nested', children: createTreeRecursive(before[key], after[key]),
+        };
+      case (_.isObject(before[key]) && !_.has(after, key)): // объект -> не стало
+        return {
+          key, state: 'deleted---', children: createTreeRecursive(before[key], {}),
+        };
+      case (_.isObject(before[key]) && !_.isObject(after[key])): // объект -> не объект
+        return {
+          key, state: 'updated', newVal: after[key], children: createTreeRecursive(before[key], {}),
+        };
+      case (!_.has(before, key) && _.isObject(after[key])): // небыло -> стал объект
+        return {
+          key, state: 'added', children: createTreeRecursive({}, after[key]),
+        };
+      case (!_.isObject(before[key]) && _.isObject(after[key])): // был не объект -> стал объект
+        return {
+          key, state: 'updated', oldVal: before[key], children: createTreeRecursive({}, after[key]),
+        };
+      // не объекты
+      case (before[key] === after[key]): // было/стало равны
+        return {
+          key, state: 'shared', oldVal: before[key], newVal: after[key],
+        };
+      case (!_.has(before, key) && _.has(after, key)): // не было -> стало
+        return {
+          key, state: 'added', newVal: after[key],
+        };
+      case (_.has(before, key) && !_.has(after, key)): // было -> не стало
+        return {
+          key, state: 'deleted', oldVal: before[key],
+        };
+      case (before[key] !== after[key]): // было/стало не равны
+        return {
+          key, state: 'updated', oldVal: before[key], newVal: after[key],
+        };
+      default: // не нашли вариант - бросаем ошибку
+        throw new Error(`Unknown state\n before: ${JSON.stringify(before)}\n after: ${JSON.stringify(after)}`);
+    }
+  });
 };
 
-const getDiff = (data1, data2, keys) => keys.map((key) => ({
-  key,
-  state: getStateByKey(data1, data2, key),
-  oldValue: data1[key],
-  newValue: data2[key],
-}));
-
+// возвращает String пропущенный через formatter зависящий от входящего параметра format
 export default (filepath1, filepath2, format = null) => {
   const data = parser(filepath1, filepath2);
-  const data1keys = Object.keys(data.data1);
-  const data2keys = Object.keys(data.data2);
-  const sortedKeys = _.sortBy(_.union(data1keys, data2keys));
-  const diff = getDiff(data.data1, data.data2, sortedKeys);
+  const tree = createTreeRecursive(data.data1, data.data2); 
   switch (format) {
-    case 'stylish': return stylish(diff);
-    default: return diff;
+    case 'stylish': return stylish(tree);
+    default: return tree;
   }
-  // должен возвращаться String пропущенный через formatter зависящий от входящего параметра format
 };
