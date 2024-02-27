@@ -1,7 +1,7 @@
 [
     {
       "key": "common",
-      "state": "nested",
+      "state": "shared",
       "children": [
         {
           "key": "follow",
@@ -43,11 +43,11 @@
         },
         {
           "key": "setting6",
-          "state": "nested",
+          "state": "shared",
           "children": [
             {
               "key": "doge",
-              "state": "nested",
+              "state": "shared",
               "children": [
                 {
                   "key": "wow",
@@ -74,7 +74,7 @@
     },
     {
       "key": "group1",
-      "state": "nested",
+      "state": "shared",
       "children": [
         {
           "key": "baz",

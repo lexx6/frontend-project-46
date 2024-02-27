@@ -10,7 +10,7 @@ const createTreeRecursive = (before, after) => {
       // объекты
       case (_.isObject(before[key]) && _.isObject(after[key])): // было/стало оба объекты
         return {
-          key, state: 'nested', children: createTreeRecursive(before[key], after[key]),
+          key, state: 'shared', children: createTreeRecursive(before[key], after[key]),
         };
       case (_.isObject(before[key]) && !_.has(after, key)): // объект -> не стало
         return {
