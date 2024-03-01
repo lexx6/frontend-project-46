@@ -38,3 +38,13 @@ test('json and yaml, format default', () => {
     ),
   ).toEqual(readFile('yamlJsonStylishTest.txt'));
 });
+
+test('json and json, format plain', () => {
+  expect(
+    genDiff(
+      getFixturePath('file1.json'),
+      getFixturePath('file2.json'),
+      'plain',
+    ),
+  ).toEqual(readFile('jsonJsonPlainTest.txt'));
+});
