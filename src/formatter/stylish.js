@@ -1,6 +1,4 @@
-// получает массив необработанных объектов, возвращает массив обработанных string
-const getNodesRecursive = (nodeList, depth = 0, symbolDepth = null) => nodeList.map((node) => { //
-  // функция обрабатывает значение ноды и возвращает просто стринг, либо стринг в виде объекта
+const getNodesRecursive = (nodeList, depth = 0, symbolDepth = null) => nodeList.map((node) => {
   const getStringFormatted = (symbol, key, value, dep, symDepth = null) => {
     const defaultOffset = 2;
     const levelOffset = 4;

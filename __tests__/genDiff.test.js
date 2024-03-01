@@ -12,7 +12,7 @@ const readFile = (name) => fs.readFileSync(getFixturePath(name), 'utf-8');
 test('json and json, format json', () => {
   expect(
     JSON.parse(
-      genDiff(getFixturePath('file1.json'),getFixturePath('file2.json'),'json'),
+      genDiff(getFixturePath('file1.json'), getFixturePath('file2.json'), 'json'),
     ),
   ).toStrictEqual(JSON.parse(readFile('jsonJsonJsonTest.json')));
 });
