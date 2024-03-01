@@ -52,7 +52,7 @@ const createTreeRecursive = (before, after) => {
 };
 
 // возвращает String пропущенный через formatter зависящий от входящего параметра format
-export default (filepath1, filepath2, format = 'raw') => {
+export default (filepath1, filepath2, format) => {
   const data = parser(filepath1, filepath2);
   const tree = createTreeRecursive(data.data1, data.data2);
   return getFormatted(tree, format);
