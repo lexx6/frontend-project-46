@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import parser from './parser.js';
-import stylish from './formatter/stylish.js';
-import plain from './formatter/plain.js';
+import getFormatted from './formatter/index.js';
 
 // рекурсивно создает дерево различий
 const createTreeRecursive = (before, after) => {
@@ -53,12 +52,8 @@ const createTreeRecursive = (before, after) => {
 };
 
 // возвращает String пропущенный через formatter зависящий от входящего параметра format
-export default (filepath1, filepath2, format = null) => {
+export default (filepath1, filepath2, format = 'raw') => {
   const data = parser(filepath1, filepath2);
-  const tree = createTreeRecursive(data.data1, data.data2); 
-  switch (format) {
-    case 'stylish': return stylish(tree);
-    case 'plain': return plain(tree);
-    default: return tree;
-  }
+  const tree = createTreeRecursive(data.data1, data.data2);
+  return getFormatted(tree, format);
 };

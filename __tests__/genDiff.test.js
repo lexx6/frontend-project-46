@@ -9,12 +9,12 @@ const __dirname = path.dirname(__filename);
 const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
 const readFile = (name) => fs.readFileSync(getFixturePath(name), 'utf-8');
 
-test('json and json, format default', () => {
+test('json and json, format raw', () => {
   expect(
     genDiff(
       getFixturePath('file1.json'),
       getFixturePath('file2.json'),
-      'default',
+      'raw',
     ),
   ).toStrictEqual(JSON.parse(readFile('jsonJsonRawTest.json')));
 });
@@ -29,7 +29,7 @@ test('json and json, format stylish', () => {
   ).toEqual(readFile('jsonJsonStylishTest.txt'));
 });
 
-test('json and yaml, format default', () => {
+test('json and yaml, format stylish', () => {
   expect(
     genDiff(
       getFixturePath('file1.yml'),
