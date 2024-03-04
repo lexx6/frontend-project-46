@@ -3,12 +3,10 @@ import path from 'node:path';
 import fs from 'node:fs';
 import yaml from 'js-yaml';
 
-const getPaths = (...filepaths) => [
-  ...filepaths.map((filePath) => ({
-    path: path.resolve(cwd(), filePath),
-    ext: path.extname(filePath),
-  })),
-];
+const getPaths = (filepath1, filepath2) => [filepath1, filepath2].map((filePath) => ({
+  path: path.resolve(cwd(), filePath),
+  ext: path.extname(filePath),
+}));
 
 const getData = ({ path: p, ext }) => {
   switch (ext) {
