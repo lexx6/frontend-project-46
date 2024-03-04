@@ -1,7 +1,7 @@
 import stylish from './stylish.js';
 import plain from './plain.js';
 
-export default (tree, format = 'json') => {
+export default (tree, format = 'stylish') => {
   switch (format) {
     case 'stylish': return stylish(tree);
     case 'plain': return plain(tree);
