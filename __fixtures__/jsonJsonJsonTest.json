@@ -23,7 +23,13 @@
           "key": "setting3",
           "state": "updated",
           "oldVal": true,
-          "newVal": null
+          "children": [
+            {
+              "key": "key",
+              "state": "added",
+              "newVal": "value"
+            }
+          ]
         },
         {
           "key": "setting4",

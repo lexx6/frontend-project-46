@@ -28,7 +28,7 @@ const getNodesRecursive = (nodeList, depth = 0, symbolDepth = null) => nodeList.
           : getStringFormatted('-', node.key, node.children, depth, symbolDepth ?? depth),
         Object.hasOwn(node, 'newVal')
           ? getStringFormatted('+', node.key, node.newVal, depth, symbolDepth)
-          : getStringFormatted('+', node.key, node.children, depth, symbolDepth),
+          : getStringFormatted('+', node.key, node.children, depth, symbolDepth ?? depth),
       ].join('');
     }
     case ('added'): {
