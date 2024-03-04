@@ -2,7 +2,11 @@ const getValueString = (node, key) => {
   if (Array.isArray(node[key])) return '[complex value]';
   if (typeof node[key] === 'string') return `'${node[key]}'`;
   if (typeof node[key] === 'boolean') return node[key];
+  if (typeof node[key] === 'number') return node[key];
+  if (typeof node[key] === 'symbol') return `'${node[key]}'`;
   if (node[key] === null) return 'null';
+  if (node[key] === undefined) return 'undefined';
+
   throw new Error(`Unknown type of value: \n${JSON.stringify(node[key])}`);
 };
 
