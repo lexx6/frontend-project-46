@@ -1,3 +1,6 @@
+import { cwd } from 'node:process';
+import path from 'node:path';
+import fs from 'node:fs';
 import _ from 'lodash';
 import parser from './parser.js';
 import getFormatted from './formatter/index.js';
@@ -48,8 +51,21 @@ const createTreeRecursive = (before, after) => {
   });
 };
 
+const getFormat = (extension) => {
+  switch (extension) {
+    case '.json': return 'json';
+    case '.yml': return 'yml';
+    case '.yaml': return 'yml';
+    default: throw new Error(`Extension ${extension} is not valid`);
+  }
+};
+
 export default (filepath1, filepath2, format) => {
-  const data = parser(filepath1, filepath2);
-  const tree = createTreeRecursive(data.data1, data.data2);
+  const [data1, data2] = [filepath1, filepath2].map((filepath) => {
+    const absolutePath = path.resolve(cwd(), filepath);
+    const extension = path.extname(filepath);
+    return parser(fs.readFileSync(absolutePath), getFormat(extension));
+  });
+  const tree = createTreeRecursive(data1, data2);
   return getFormatted(tree, format);
 };
