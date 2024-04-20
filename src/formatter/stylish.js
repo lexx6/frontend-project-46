@@ -1,46 +1,36 @@
-const getNodesRecursive = (nodeList, depth = 0, symbolDepth = null) => nodeList.map((node) => {
-  const getStringFormatted = (symbol, key, value, dep, symDepth = null) => {
-    const defaultOffset = 2;
-    const levelOffset = 4;
-    const offset = ' '.repeat(levelOffset * dep + defaultOffset);
-    const sym = symDepth !== null && dep > symDepth ? ' ' : symbol;
-    const sibling = (val) => `{\n${val}${offset}  }\n`;
-    return Array.isArray(value)
-      ? `${offset}${sym} ${key}: ${sibling(getNodesRecursive(value, dep + 1, symDepth).join(''))}`
-      : `${offset}${sym} ${key}: ${value}\n`;
-  };
+import _ from 'lodash';
 
-  switch (node.state) {
-    case ('shared'): {
-      return Array.isArray(node.children)
-        ? getStringFormatted(' ', node.key, node.children, depth, symbolDepth)
-        : getStringFormatted(' ', node.key, node.oldVal, depth, symbolDepth);
+const getIndent = (depth, intend = 4) => ' '.repeat(intend * depth);
+
+const stringify = (data, depth) => {
+  if (!_.isObject(data)) return data;
+  const entries = Object.entries(data);
+  const str = entries.map(([key, val]) => `\n${getIndent(depth + 1)}${key}: ${stringify(val, depth + 1)}`).join('');
+  return `{${str}\n${getIndent(depth)}}`;
+};
+
+export default (data) => {
+  const recursion = (nodes, depth) => nodes.map((node) => {
+    const nextDepth = depth + 1;
+    if (node.type === 'nested') {
+      return `${getIndent(nextDepth)}${node.key}: {\n${recursion(node.children, nextDepth)}\n${getIndent(nextDepth)}}`;
     }
-    case ('deleted'): {
-      return Array.isArray(node.children)
-        ? getStringFormatted('-', node.key, node.children, depth, symbolDepth ?? depth)
-        : getStringFormatted('-', node.key, node.oldVal, depth, symbolDepth);
+    if (node.type === 'deleted') {
+      return `${getIndent(depth)}  - ${node.key}: ${stringify(node.value, nextDepth)}`;
     }
-    case ('updated'): {
+    if (node.type === 'added') {
+      return `${getIndent(depth)}  + ${node.key}: ${stringify(node.value, nextDepth)}`;
+    }
+    if (node.type === 'changed') {
       return [
-        Object.hasOwn(node, 'oldVal')
-          ? getStringFormatted('-', node.key, node.oldVal, depth, symbolDepth)
-          : getStringFormatted('-', node.key, node.children, depth, symbolDepth ?? depth),
-        Object.hasOwn(node, 'newVal')
-          ? getStringFormatted('+', node.key, node.newVal, depth, symbolDepth)
-          : getStringFormatted('+', node.key, node.children, depth, symbolDepth ?? depth),
-      ].join('');
+        `${getIndent(depth)}  - ${node.key}: ${stringify(node.value1, nextDepth)}`,
+        `${getIndent(depth)}  + ${node.key}: ${stringify(node.value2, nextDepth)}`,
+      ].join('\n');
     }
-    case ('added'): {
-      return Array.isArray(node.children)
-        ? getStringFormatted('+', node.key, node.children, depth, symbolDepth ?? depth)
-        : getStringFormatted('+', node.key, node.newVal, depth, symbolDepth);
+    if (node.type === 'shared') {
+      return `${getIndent(depth)}    ${node.key}: ${stringify(node.value, depth + 1)}`;
     }
-    default: throw new Error(`Wrong state: \n${JSON.stringify(node)}`);
-  }
-});
-
-export default (diff) => {
-  const nodes = getNodesRecursive(diff).join('');
-  return `{\n${nodes}}`;
+    throw new Error(`Unknown node type: ${node.type}`);
+  }).join('\n');
+  return `{\n${recursion(data, 0)}\n}`;
 };

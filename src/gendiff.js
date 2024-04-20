@@ -8,46 +8,23 @@ import getFormatted from './formatter/index.js';
 const createTreeRecursive = (before, after) => {
   const keys = _.sortBy(_.union(_.keys(before), _.keys(after)));
   return keys.map((key) => {
-    switch (true) {
-      case (_.isObject(before[key]) && _.isObject(after[key])):
-        return {
-          key, state: 'shared', children: createTreeRecursive(before[key], after[key]),
-        };
-      case (_.isObject(before[key]) && !_.has(after, key)):
-        return {
-          key, state: 'deleted', children: createTreeRecursive(before[key], {}),
-        };
-      case (_.isObject(before[key]) && !_.isObject(after[key])):
-        return {
-          key, state: 'updated', newVal: after[key], children: createTreeRecursive(before[key], {}),
-        };
-      case (!_.has(before, key) && _.isObject(after[key])):
-        return {
-          key, state: 'added', children: createTreeRecursive({}, after[key]),
-        };
-      case (!_.isObject(before[key]) && _.isObject(after[key])):
-        return {
-          key, state: 'updated', oldVal: before[key], children: createTreeRecursive({}, after[key]),
-        };
-      case (before[key] === after[key]):
-        return {
-          key, state: 'shared', oldVal: before[key], newVal: after[key],
-        };
-      case (!_.has(before, key) && _.has(after, key)):
-        return {
-          key, state: 'added', newVal: after[key],
-        };
-      case (_.has(before, key) && !_.has(after, key)):
-        return {
-          key, state: 'deleted', oldVal: before[key],
-        };
-      case (before[key] !== after[key]):
-        return {
-          key, state: 'updated', oldVal: before[key], newVal: after[key],
-        };
-      default:
-        throw new Error(`Unknown state\n before: ${JSON.stringify(before)}\n after: ${JSON.stringify(after)}`);
+    if (_.isObject(before[key]) && _.isObject(after[key])) {
+      return {
+        key, type: 'nested', children: createTreeRecursive(before[key], after[key]),
+      };
     }
+    if (!_.has(before, key) && _.has(after, key)) {
+      return { key, type: 'added', value: after[key] };
+    }
+    if (_.has(before, key) && !_.has(after, key)) {
+      return { key, type: 'deleted', value: before[key] };
+    }
+    if (before[key] === after[key]) {
+      return { key, type: 'shared', value: before[key] };
+    }
+    return {
+      key, type: 'changed', value1: before[key], value2: after[key],
+    };
   });
 };
 
